@@ -19,6 +19,7 @@ namespace car_speed_calculator
         int FPS = 30;
         System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr,System.Byte>> image_array = new List<Image<Bgr, Byte>>();
         Emgu.CV.Capture _capture;
+        string file = "";
         public Form1()
         {
             InitializeComponent();
@@ -28,7 +29,6 @@ namespace car_speed_calculator
         {
             Image<Bgr, Byte> frame = _capture.QueryFrame().ToImage<Bgr,Byte>();
             pictureBox1.Image = frame.ToBitmap();
-            Console.WriteLine("ok");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -38,6 +38,15 @@ namespace car_speed_calculator
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if(file == "")
+                MessageBox.Show("Please select a video first","Error");
+            else
+            {
+                My_Time.Interval = 1000 / FPS;
+                My_Time.Tick += new EventHandler(My_Timer_Tick);
+                My_Time.Start();
+                _capture = new Capture(file);
+            }
 
         }
 
@@ -49,7 +58,6 @@ namespace car_speed_calculator
         private void button8_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog1.ShowDialog();
-            string file="";
             if (result == DialogResult.OK)
             {
                 file = openFileDialog1.FileName;
@@ -62,10 +70,11 @@ namespace car_speed_calculator
                     Console.WriteLine(err.ToString());
                 }
             }
-            My_Time.Interval = 1000 / FPS;
-            My_Time.Tick += new EventHandler(My_Timer_Tick);
-            My_Time.Start();
-            _capture = new Capture(file);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            My_Time.Stop();
         }
     }
 }

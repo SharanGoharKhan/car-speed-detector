@@ -59,11 +59,12 @@
             // button5
             // 
             this.button5.Location = new System.Drawing.Point(480, 12);
-            this.button5.Name = "button";
+            this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(402, 71);
             this.button5.TabIndex = 1;
             this.button5.Text = "Stop";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
