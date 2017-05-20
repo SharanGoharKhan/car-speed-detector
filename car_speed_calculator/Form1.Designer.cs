@@ -48,50 +48,62 @@
             // 
             // button_start
             // 
+            this.button_start.BackColor = System.Drawing.Color.Green;
+            this.button_start.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button_start.Location = new System.Drawing.Point(35, 12);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(413, 71);
             this.button_start.TabIndex = 0;
             this.button_start.Text = "Start";
-            this.button_start.UseVisualStyleBackColor = true;
+            this.button_start.UseVisualStyleBackColor = false;
             this.button_start.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
+            this.button5.BackColor = System.Drawing.Color.Red;
+            this.button5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button5.Location = new System.Drawing.Point(480, 12);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(402, 71);
             this.button5.TabIndex = 1;
             this.button5.Text = "Stop";
-            this.button5.UseVisualStyleBackColor = true;
+            this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
+            this.button6.BackColor = System.Drawing.Color.Blue;
+            this.button6.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button6.Location = new System.Drawing.Point(936, 12);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(371, 71);
             this.button6.TabIndex = 2;
             this.button6.Text = "Pause";
-            this.button6.UseVisualStyleBackColor = true;
+            this.button6.UseVisualStyleBackColor = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button7
             // 
+            this.button7.BackColor = System.Drawing.Color.Blue;
+            this.button7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button7.Location = new System.Drawing.Point(35, 592);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(1299, 96);
             this.button7.TabIndex = 3;
             this.button7.Text = "Binarize Video";
-            this.button7.UseVisualStyleBackColor = true;
+            this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button_select_video
             // 
+            this.button_select_video.BackColor = System.Drawing.Color.Blue;
+            this.button_select_video.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button_select_video.Location = new System.Drawing.Point(35, 103);
             this.button_select_video.Name = "button_select_video";
             this.button_select_video.Size = new System.Drawing.Size(239, 468);
             this.button_select_video.TabIndex = 4;
             this.button_select_video.Text = "Select Video";
-            this.button_select_video.UseVisualStyleBackColor = true;
+            this.button_select_video.UseVisualStyleBackColor = false;
             this.button_select_video.Click += new System.EventHandler(this.button8_Click);
             // 
             // label1

@@ -38,6 +38,7 @@ namespace car_speed_calculator
 
         private void button4_Click(object sender, EventArgs e)
         {
+            //Start Button
             if(file == "")
                 MessageBox.Show("Please select a video first","Error");
             else
@@ -57,6 +58,7 @@ namespace car_speed_calculator
 
         private void button8_Click(object sender, EventArgs e)
         {
+            //Select Video Button
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -69,12 +71,57 @@ namespace car_speed_calculator
                 {
                     Console.WriteLine(err.ToString());
                 }
+                Capture previewCapture = new Capture(file);
+                Image<Bgr, Byte> frame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
+                pictureBox1.Image = frame.ToBitmap();
+
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            My_Time.Stop();
+            //Stop Button
+            if (file == "")
+                MessageBox.Show("Please select a video first", "Error");
+            else
+            {
+                My_Time.Stop();
+                Capture previewCapture = new Capture(file);
+                Image<Bgr, Byte> frame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
+                pictureBox1.Image = frame.ToBitmap();
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            //Pause Button
+            if (file == "")
+                MessageBox.Show("Please select a video first", "Error");
+            else
+            {
+                if(button6.Text=="Pause")
+                {
+                    button6.Text = "Play";
+                    button6.BackColor = Color.Green;
+                }
+                else
+                {
+                    button6.Text = "Pause";
+                    button6.BackColor = Color.Red;
+                }
+                //My_Time.Stop();
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            //Binarize Video Button
+            if (file == "")
+                MessageBox.Show("Please select a video first", "Error");
+            else
+            {
+                My_Time.Stop();
+            }
         }
     }
 }
