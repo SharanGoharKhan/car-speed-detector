@@ -17,9 +17,13 @@ namespace car_speed_calculator
     {
         System.Windows.Forms.Timer My_Time = new Timer();
         int FPS = 30;
+        int threshhold_value = 50;
         System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr,System.Byte>> image_array = new List<Image<Bgr, Byte>>();
         Emgu.CV.Capture _capture;
         string file = "";
+        //get a first image and convert it into gray scale
+        Image<Bgr, byte> firstFrame;
+        Image<Gray, byte> firstFrameGray;
         public Form1()
         {
             InitializeComponent();
@@ -27,8 +31,41 @@ namespace car_speed_calculator
 
         private void My_Timer_Tick(object sender, EventArgs e)
         {
-            Image<Bgr, Byte> frame = _capture.QueryFrame().ToImage<Bgr,Byte>();
-            pictureBox1.Image = frame.ToBitmap();
+            using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr,Byte>())
+            {
+                if(nextFrame != null)
+                {
+                    //Convert Image into grayscale
+                    //Image<Gray, byte> grayFrame = nextFrame.Convert<Gray, byte>();
+                    //Emgu.CV.Structure.Gray gray = new Emgu.CV.Structure.Gray();
+                    //gray.Intensity = 50;
+                    //grayFrame._ThresholdToZero(gray);
+                    //Emgu.CV.VideoSurveillance.BackgroundSubtractor backgroundSubtractor;
+                    //Emgu.CV.BgSegm.BackgroundSubtractorMOG backgroundImage;
+                    //backgroundImage.Apply()
+                    //backgroundSubtractor.Apply()
+                    //grayFrame.
+                    //pictureBox1.Image = grayFrame.ToBitmap();
+                    //Emgu.CV.Mat smoothedFrame = new Mat();
+                    //Emgu.CV.CvInvoke.GaussianBlur(nextFrame, smoothedFrame, new Size(3, 3), 1);
+                    //Image<Gray,byte> img3 = grayFrame.AbsDiff(smoothedFrame.ToImage<Gray, Byte>());
+                    //img3 = img3.ThresholdBinary(new Gray(60), new Gray(255));
+                    //pictureBox1.Image = nextFrame.ToBitmap();
+                    //pictureBox2.Image = img3.ToBitmap();
+
+                    //convert both images into gray
+                    Image<Gray,byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
+                    Image<Bgr, byte> nextNextFrame = _capture.QueryFrame().ToImage<Bgr, byte>();
+                    Image<Gray, byte> nextNextFrameGray = nextNextFrame.Convert<Gray, byte>();
+                    //find absolute diff of gray images
+                    Image<Gray, byte> diffFrame = nextFrameGray.AbsDiff(nextNextFrameGray);
+                    pictureBox1.Image = nextFrame.ToBitmap();
+                    pictureBox2.Image = diffFrame.ToBitmap();    
+                }
+            }
+            //    Image<Gray, Byte> frame = _capture.QueryFrame().ToImage<Gray, Byte>();
+            //frame.ThresholdBinary(new Gray(50), new Gray(255));
+            //pictureBox1.Image = frame.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -72,8 +109,11 @@ namespace car_speed_calculator
                     Console.WriteLine(err.ToString());
                 }
                 Capture previewCapture = new Capture(file);
-                Image<Bgr, Byte> frame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
-                pictureBox1.Image = frame.ToBitmap();
+                this.firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+                this.firstFrameGray = this.firstFrame.Convert<Gray, byte>();
+                pictureBox1.Image = this.firstFrame.ToBitmap();
 
             }
         }
@@ -87,8 +127,9 @@ namespace car_speed_calculator
             {
                 My_Time.Stop();
                 Capture previewCapture = new Capture(file);
-                Image<Bgr, Byte> frame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
-                pictureBox1.Image = frame.ToBitmap();
+                firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
+                firstFrameGray = firstFrame.Convert<Gray, byte>();
+                pictureBox1.Image = firstFrame.ToBitmap();
             }
         }
 
