@@ -18,7 +18,7 @@ namespace car_speed_calculator
         System.Windows.Forms.Timer My_Time = new Timer();
         int FPS = 30;
         int threshhold_value = 50;
-        System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr,System.Byte>> image_array = new List<Image<Bgr, Byte>>();
+        System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>> image_array = new List<Image<Bgr, Byte>>();
         Emgu.CV.Capture _capture;
         string file = "";
         //get a first image and convert it into gray scale
@@ -31,41 +31,29 @@ namespace car_speed_calculator
 
         private void My_Timer_Tick(object sender, EventArgs e)
         {
-            using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr,Byte>())
+            using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             {
-                if(nextFrame != null)
+                if (nextFrame != null)
                 {
-                    //Convert Image into grayscale
-                    //Image<Gray, byte> grayFrame = nextFrame.Convert<Gray, byte>();
-                    //Emgu.CV.Structure.Gray gray = new Emgu.CV.Structure.Gray();
-                    //gray.Intensity = 50;
-                    //grayFrame._ThresholdToZero(gray);
-                    //Emgu.CV.VideoSurveillance.BackgroundSubtractor backgroundSubtractor;
-                    //Emgu.CV.BgSegm.BackgroundSubtractorMOG backgroundImage;
-                    //backgroundImage.Apply()
-                    //backgroundSubtractor.Apply()
-                    //grayFrame.
-                    //pictureBox1.Image = grayFrame.ToBitmap();
-                    //Emgu.CV.Mat smoothedFrame = new Mat();
-                    //Emgu.CV.CvInvoke.GaussianBlur(nextFrame, smoothedFrame, new Size(3, 3), 1);
-                    //Image<Gray,byte> img3 = grayFrame.AbsDiff(smoothedFrame.ToImage<Gray, Byte>());
-                    //img3 = img3.ThresholdBinary(new Gray(60), new Gray(255));
-                    //pictureBox1.Image = nextFrame.ToBitmap();
-                    //pictureBox2.Image = img3.ToBitmap();
-
                     //convert both images into gray
-                    Image<Gray,byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
+                    Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
                     Image<Bgr, byte> nextNextFrame = _capture.QueryFrame().ToImage<Bgr, byte>();
                     Image<Gray, byte> nextNextFrameGray = nextNextFrame.Convert<Gray, byte>();
                     //find absolute diff of gray images
                     Image<Gray, byte> diffFrame = nextFrameGray.AbsDiff(nextNextFrameGray);
                     pictureBox1.Image = nextFrame.ToBitmap();
-                    pictureBox2.Image = diffFrame.ToBitmap();    
+                    //convert diffFrame to binary
+                    Image<Gray, byte> diffFrameBinary = diffFrame.ThresholdBinary(new Gray(30), new Gray(255));
+                    //create an empty image
+                    Image<Gray, byte> resultImage = diffFrameBinary;
+                    //create a structuring element
+                    var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(2,2), new Point(-1, -1));
+                    //apply dilation on image
+                    Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage,element,new Point(-1,-1),10,Emgu.CV.CvEnum.BorderType.Default,default(MCvScalar));
+                    //convert the image to bitmap and set to picturebox
+                    pictureBox2.Image = resultImage.ToBitmap();
                 }
             }
-            //    Image<Gray, Byte> frame = _capture.QueryFrame().ToImage<Gray, Byte>();
-            //frame.ThresholdBinary(new Gray(50), new Gray(255));
-            //pictureBox1.Image = frame.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -76,8 +64,8 @@ namespace car_speed_calculator
         private void button4_Click(object sender, EventArgs e)
         {
             //Start Button
-            if(file == "")
-                MessageBox.Show("Please select a video first","Error");
+            if (file == "")
+                MessageBox.Show("Please select a video first", "Error");
             else
             {
                 My_Time.Interval = 1000 / FPS;
@@ -140,7 +128,7 @@ namespace car_speed_calculator
                 MessageBox.Show("Please select a video first", "Error");
             else
             {
-                if(button6.Text=="Pause")
+                if (button6.Text == "Pause")
                 {
                     button6.Text = "Play";
                     button6.BackColor = Color.Green;
