@@ -63,6 +63,6 @@ C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_spee
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\zh-cn\ZedGraph.resources.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\zh-tw\ZedGraph.resources.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.csprojResolveAssemblyReference.cache
-C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.Form1.resources
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.Properties.Resources.resources
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.csproj.GenerateResource.Cache
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.MyUtilities.resources
