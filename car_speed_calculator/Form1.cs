@@ -61,11 +61,14 @@ namespace car_speed_calculator
                     Image<Gray, byte> resultImage = diffFrameBinary;
                     //Create a countour
                     Image<Gray, byte> contours = resultImage;
-                    pictureBox1.Image = resultImage.ToBitmap();
-                    Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
-                    pictureBox2.Image = resultImage.ToBitmap();
                     //create a structuring element
                     var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
+                    //apply dilation on image
+                    Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                    //pictureBox1.Image = resultImage.ToBitmap();
+                    Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
+                    //pictureBox2.Image = resultImage.ToBitmap();
+                    
                     //apply dilation on image
                     //Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
                     ////Create a contour again
@@ -84,11 +87,11 @@ namespace car_speed_calculator
                     //Draw a bounding box
                     for(var i=0;i<points.Count;++i)
                     {
-                        resultImage.Draw(new Rectangle(points[i].X, points[i].Y, 50, 50), new Gray(200), 1);
+                        nextFrame.Draw(new Rectangle(points[i].X, points[i].Y, 25, 25), new Bgr(0,0,255),1);
                     }
                     //convert the image to bitmap and set to picturebox
-                    //pictureBox1.Image = contours.ToBitmap();
-                    //pictureBox2.Image = resultImage.ToBitmap();
+                    pictureBox1.Image = nextFrame.ToBitmap();
+                    pictureBox2.Image = resultImage.ToBitmap();
                 }
             }
         }
