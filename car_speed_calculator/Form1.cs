@@ -45,54 +45,52 @@ namespace car_speed_calculator
         }
         private void My_Timer_Tick(object sender, EventArgs e)
         {
-            if (this._capture.QueryFrame().ToImage<Bgr, byte>() != null)
+                using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             {
-                    using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
-                {
-                    //convert both images into gray
-                    Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
-                    Image<Bgr, byte> nextNextFrame = _capture.QueryFrame().ToImage<Bgr, byte>();
-                    Image<Gray, byte> nextNextFrameGray = nextNextFrame.Convert<Gray, byte>();
-                    //find absolute diff of gray images
-                    Image<Gray, byte> diffFrame = nextFrameGray.AbsDiff(nextNextFrameGray);
-                    //convert diffFrame to binary
-                    Image<Gray, byte> diffFrameBinary = diffFrame.ThresholdBinary(new Gray(30), new Gray(255));
-                    //create an empty image
-                    Image<Gray, byte> resultImage = diffFrameBinary;
-                    //Create a countour
-                    Image<Gray, byte> contours = resultImage;
-                    //create a structuring element
-                    var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
-                    //apply dilation on image
-                    Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
-                    //pictureBox1.Image = resultImage.ToBitmap();
-                    Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
-                    //pictureBox2.Image = resultImage.ToBitmap();
+                //convert both images into gray
+                Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
+                Image<Bgr, byte> nextNextFrame = _capture.QueryFrame().ToImage<Bgr, byte>();
+                Image<Gray, byte> nextNextFrameGray = nextNextFrame.Convert<Gray, byte>();
+                //find absolute diff of gray images
+                Image<Gray, byte> diffFrame = nextFrameGray.AbsDiff(nextNextFrameGray);
+                //convert diffFrame to binary
+                Image<Gray, byte> diffFrameBinary = diffFrame.ThresholdBinary(new Gray(30), new Gray(255));
+                //create an empty image
+                Image<Gray, byte> resultImage = diffFrameBinary;
+                pictureBox2.Image = diffFrameBinary.ToBitmap();
+                //Create a countour
+                Image<Gray, byte> contours = resultImage;
+                //create a structuring element
+                var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
+                //apply dilation on image
+                Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                //pictureBox1.Image = resultImage.ToBitmap();
+                Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
+                //pictureBox2.Image = resultImage.ToBitmap();
                     
-                    //apply dilation on image
-                    //Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
-                    ////Create a contour again
-                    //Image<Gray, byte> contours2 = resultImage;
-                    //Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour2 = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
-                    //create a list of point for rectangle
-                    List<Point> points = new List<Point>();
-                    //store the points inside a list
-                    for(var i =0; i<resultsOfContour.Size;++i)
+                //apply dilation on image
+                //Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                ////Create a contour again
+                //Image<Gray, byte> contours2 = resultImage;
+                //Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour2 = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
+                //create a list of point for rectangle
+                List<Point> points = new List<Point>();
+                //store the points inside a list
+                for(var i =0; i<resultsOfContour.Size;++i)
+                {
+                    for(var j=0;j<resultsOfContour[i].Size;++j)
                     {
-                        for(var j=0;j<resultsOfContour[i].Size;++j)
-                        {
-                            points.Add(resultsOfContour[i][j]);
-                        }
+                        points.Add(resultsOfContour[i][j]);
                     }
-                    //Draw a bounding box
-                    for(var i=0;i<points.Count;++i)
-                    {
-                        nextFrame.Draw(new Rectangle(points[i].X, points[i].Y, 25, 25), new Bgr(0,0,255),1);
-                    }
-                    //convert the image to bitmap and set to picturebox
-                    pictureBox1.Image = nextFrame.ToBitmap();
-                    pictureBox2.Image = resultImage.ToBitmap();
                 }
+                //Draw a bounding box
+                for(var i=0;i<points.Count-1000;++i)
+                {
+                    nextFrame.Draw(new Rectangle(points[i].X, points[i].Y, 25, 25), new Bgr(0,0,255),1);
+                }
+                //convert the image to bitmap and set to picturebox
+                pictureBox1.Image = nextFrame.ToBitmap();
+                //pictureBox2.Image = resultImage.ToBitmap();
             }
         }
 
