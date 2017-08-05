@@ -78,6 +78,7 @@ namespace car_speed_calculator
             Gray circleAccumulatorThreshhold = new Gray(120);
 
             Image<Gray, byte> cannyEdges = img.Canny(180,120);
+            pictureBox1.Image = cannyEdges.ToBitmap();
             LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
                 2,//Distance resolution in pixel-related units
                 Math.PI / 45.0,//Angle resolution measured in radians
@@ -85,13 +86,20 @@ namespace car_speed_calculator
                 30,//min line width
                 10//gap between lines
                 )[0];//Get the lines from the first channel
+            Console.WriteLine(lines);
             #region Find rectangles
-            List<MCvBlob> boxList = new List<MCvBlob>();
-            using ( Emgu.Util.TypeEnum. = new MemStorage()) //allocate storage for contour approximation
-                {
-                var index = 0;
-                    for (Emgu.CV.CvInvoke.con contours = cannyEdges.FindContours(); contours!=null;contours = contours[index])
-                }
+            Image<Bgr, Byte> imageLines = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
+            foreach(LineSegment2D line in lines)
+            {
+                imageLines.Draw(line, new Bgr(Color.DeepSkyBlue), 1);
+            }
+            pictureBox2.Image = imageLines.ToBitmap();
+            //List<Triangle2DF> boxList = new List<Triangle2DF>();
+            //using ( VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint()) //allocate storage for contour approximation
+            //    {
+            //        CvInvoke.FindContours()                
+            //    }
+            #endregion Find rectangles
         }
 
         private void button3_Click(object sender, EventArgs e)

@@ -38,13 +38,11 @@ C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_spee
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\car_speed_calculator.exe
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\car_speed_calculator.pdb
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.UI.dll
-C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.UI.GL.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.World.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\OpenTK.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\OpenTK.GLControl.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\ZedGraph.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.UI.xml
-C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.UI.GL.xml
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\Emgu.CV.World.xml
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\OpenTK.xml
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\OpenTK.GLControl.xml
@@ -66,3 +64,13 @@ C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_spee
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.Properties.Resources.resources
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.csproj.GenerateResource.Cache
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.MyUtilities.resources
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\concrt140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\cvextern.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\msvcp140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\opencv_ffmpeg320_64.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\vcruntime140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\concrt140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\cvextern.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\msvcp140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\opencv_ffmpeg320.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\vcruntime140.dll

@@ -69,24 +69,6 @@
             A view for histogram
             </summary>
         </member>
-        <member name="M:Emgu.CV.UI.HistogramViewer.#ctor">
-            <summary>
-            A histogram viewer
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.HistogramViewer.Show(Emgu.CV.IImage)">
-            <summary>
-            Display the histograms of the specific image
-            </summary>
-            <param name="image">The image to retrieve hostigram from</param>
-        </member>
-        <member name="M:Emgu.CV.UI.HistogramViewer.Show(Emgu.CV.IImage,System.Int32)">
-            <summary>
-            Display the histograms of the specific image
-            </summary>
-            <param name="image">The image to retrieve hostigram from</param>
-            <param name="numberOfBins">The numebr of bins in the histogram</param>
-        </member>
         <member name="F:Emgu.CV.UI.HistogramViewer.components">
             <summary>
             Required designer variable.
@@ -103,6 +85,24 @@
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.HistogramViewer.#ctor">
+            <summary>
+            A histogram viewer
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.HistogramViewer.Show(Emgu.CV.IImage)">
+            <summary>
+            Display the histograms of the specific image
+            </summary>
+            <param name="image">The image to retrieve histogram from</param>
+        </member>
+        <member name="M:Emgu.CV.UI.HistogramViewer.Show(Emgu.CV.IImage,System.Int32)">
+            <summary>
+            Display the histograms of the specific image
+            </summary>
+            <param name="image">The image to retrieve histogram from</param>
+            <param name="numberOfBins">The number of bins in the histogram</param>
         </member>
         <member name="P:Emgu.CV.UI.HistogramViewer.HistogramCtrl">
             <summary>
@@ -218,6 +218,17 @@
             Get or Set the zoom scale
             </summary>
         </member>
+        <member name="F:Emgu.CV.UI.ImageBox.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.ImageBox.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="F:Emgu.CV.UI.ImageBox._image">
             <summary>
             The image that is setted throught the Image property
@@ -275,17 +286,6 @@
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="F:Emgu.CV.UI.ImageBox.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.ImageBox.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
-        </member>
         <member name="P:Emgu.CV.UI.ImageBox.FunctionalMode">
             <summary>
             Get or set the functional mode for the ImageBox
@@ -337,6 +337,17 @@
             The control to display image properties
             </summary>
         </member>
+        <member name="F:Emgu.CV.UI.ImageProperty.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.ImageProperty.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="M:Emgu.CV.UI.ImageProperty.#ctor">
             <summary>
             Create a ImageProperty control
@@ -359,17 +370,6 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="F:Emgu.CV.UI.ImageProperty.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.ImageProperty.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
         </member>
         <member name="P:Emgu.CV.UI.ImageProperty.ImageBox">
             <summary>
@@ -418,6 +418,23 @@
             The Image viewer that display IImage
             </summary>
         </member>
+        <member name="F:Emgu.CV.UI.ImageViewer.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.ImageViewer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Emgu.CV.UI.ImageViewer.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="M:Emgu.CV.UI.ImageViewer.#ctor">
             <summary>
             Create an ImageViewer
@@ -449,23 +466,6 @@
             <param name="image">The image to be displayed in ImageViewer</param>
             <param name="windowName">The name of the window</param>
         </member>
-        <member name="F:Emgu.CV.UI.ImageViewer.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.ImageViewer.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Emgu.CV.UI.ImageViewer.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
         <member name="P:Emgu.CV.UI.ImageViewer.Image">
             <summary>
             Get or Set the image in this ImageViewer
@@ -479,11 +479,6 @@
         <member name="T:Emgu.CV.UI.MatrixBox">
             <summary>
             A control that is used to visualize a matrix
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.MatrixBox.#ctor">
-            <summary>
-            Create a MatrixBox
             </summary>
         </member>
         <member name="F:Emgu.CV.UI.MatrixBox.components">
@@ -503,6 +498,11 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="M:Emgu.CV.UI.MatrixBox.#ctor">
+            <summary>
+            Create a MatrixBox
+            </summary>
+        </member>
         <member name="P:Emgu.CV.UI.MatrixBox.Matrix">
             <summary>
             Get or Set the Matrix&lt;TDepth&gt; object; of this MatrixBox
@@ -511,11 +511,6 @@
         <member name="T:Emgu.CV.UI.MatrixViewer">
             <summary>
             A MatrixViewer that is used to visualize a matrix
-            </summary>
-        </member>
-        <member name="M:Emgu.CV.UI.MatrixViewer.#ctor">
-            <summary>
-            Create a MatrixViewer
             </summary>
         </member>
         <member name="F:Emgu.CV.UI.MatrixViewer.components">
@@ -533,6 +528,11 @@
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.UI.MatrixViewer.#ctor">
+            <summary>
+            Create a MatrixViewer
             </summary>
         </member>
         <member name="P:Emgu.CV.UI.MatrixViewer.Matrix">
