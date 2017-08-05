@@ -16,30 +16,16 @@ using Emgu.CV.Structure;
 
 namespace car_speed_calculator
 {
-    //public static class MyUtilities
-    //{
-    //    public static VectorOfVectorOfPoint FindContours(this Image<Gray, byte> image, Emgu.CV.CvEnum.ChainApproxMethod method = Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple
-    //        , Emgu.CV.CvEnum.RetrType type = Emgu.CV.CvEnum.RetrType.List)
-    //    {
-    //        VectorOfVectorOfPoint result = new Emgu.CV.Util.VectorOfVectorOfPoint();
-    //        //if(method == Emgu.CV.CvEnum.ChainApproxMethod.ChainCode)
-    //        //{
-    //        //    throw new ColsaNotImplementedException
-    //        //}
-    //        CvInvoke.FindContours(image, result, null, type, method);
-    //        return result;
-    //    }
-    //}
-
+   
     public  partial class Form1 : Form
     {
         System.Windows.Forms.Timer My_Time = new Timer();
         int FPS = 30;
-        int threshhold_value = 50;
-        System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>> image_array = new List<Image<Bgr, Byte>>();
         VideoCapture _capture;
         string file = "";
         //get a first image and convert it into gray scale
+        bool isEroded = false;
+        bool isDilated = false;
         Image<Bgr, byte> firstFrame;
         Image<Gray, byte> firstFrameGray;
         public Form1()
@@ -52,8 +38,17 @@ namespace car_speed_calculator
         }
         private void My_Timer_Tick(object sender, EventArgs e)
         {
+                if(_capture.QueryFrame() == null)
+            {
+                My_Time.Stop();
+                return;
+            }
                 using (Emgu.CV.Image<Bgr, byte> orignalFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             {
+                #region getValueDynamically
+                int erosionValue = Convert.ToInt32(labelErosionValue.Text.ToString());
+                int dilationValue = Convert.ToInt32(labelDilationValue.Text.ToString());
+                #endregion
                 pictureBox1.Image = orignalFrame.ToBitmap();
                 //convert image into gray
                 Image<Bgr, byte> image = orignalFrame.Resize(pictureBox1.Width, pictureBox1.Height, 0);
@@ -62,6 +57,11 @@ namespace car_speed_calculator
                 Image<Gray, byte> BgDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 Image<Gray, byte> FrameDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 //since i don't have a background image let next frame be considered as background
+                if(_capture.QueryFrame() == null)
+                {
+                    My_Time.Stop();
+                    return;
+                }
                 Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, byte>().Resize(pictureBox1.Width,pictureBox1.Height,0);
                 Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
                 CvInvoke.AbsDiff(frame, nextFrameGray, BgDifference);
@@ -69,13 +69,16 @@ namespace car_speed_calculator
                 Image<Gray, byte> thresholded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 CvInvoke.Threshold(BgDifference, thresholded, 20, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
                 pictureBox2.Image = thresholded.Bitmap;
-                pictureBox2Label.Text = "Threshholded image1";
+                pictureBox2Label.Text = "Abs Difference image";
                 //Perform erosion to remove camera noise
                 var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(2, 2), new Point(-1, -1));
                 Image<Gray, byte> eroded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
-                CvInvoke.Erode(thresholded, eroded, element, new Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                if(isDilated)
+                    CvInvoke.Dilate(thresholded, eroded, element, new Point(-1, -1), dilationValue, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                if(isEroded)
+                    CvInvoke.Erode(thresholded, eroded, element, new Point(-1, -1), erosionValue, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
                 pictureBox3.Image = eroded.Bitmap;
-                pictureBox3Label.Text = "Eroded Image";
+                pictureBox3Label.Text = "Eroded/Dilated Image";
                 //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
                 drawBoxes(eroded, image);
             }
@@ -94,7 +97,6 @@ namespace car_speed_calculator
                 30,//min line width
                 10//gap between lines
                 )[0];//Get the lines from the first channel
-            Console.WriteLine(lines);
             #region Find rectangles
             Image<Bgr, Byte> imageLines = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
             foreach(LineSegment2D line in lines)
@@ -163,30 +165,42 @@ namespace car_speed_calculator
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void buttonErosionPlus_Click(object sender, EventArgs e)
         {
-            //Stop Button
-            if (file == "")
-                MessageBox.Show("Please select a video first", "Error");
-            else
-            {
-                My_Time.Stop();
-                VideoCapture previewCapture = new VideoCapture(file);
-                firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
-                firstFrameGray = firstFrame.Convert<Gray, byte>();
-                pictureBox1.Image = firstFrame.ToBitmap();
-            }
+            isEroded = true;
+            isDilated = false;
+            int valueOfErosion = Convert.ToInt32(labelErosionValue.Text.ToString());
+            valueOfErosion++;
+            labelErosionValue.Text = valueOfErosion.ToString();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void buttonErosionMinus_Click(object sender, EventArgs e)
         {
-            //Binarize Video Button
-            if (file == "")
-                MessageBox.Show("Please select a video first", "Error");
-            else
-            {
-                My_Time.Stop();
-            }
+            isEroded = true;
+            isDilated = false;
+            int valueOfErosion = Convert.ToInt32(labelErosionValue.Text.ToString());
+            if (valueOfErosion > 0)
+                valueOfErosion--;
+            labelErosionValue.Text = valueOfErosion.ToString();
+        }
+
+        private void buttonDilationPlus_Click(object sender, EventArgs e)
+        {
+            isDilated = true;
+            isEroded = false;
+            int valueOfDilation = Convert.ToInt32(labelDilationValue.Text.ToString());
+            valueOfDilation++;
+            labelDilationValue.Text = valueOfDilation.ToString();
+        }
+
+        private void buttonDilationMinus_Click(object sender, EventArgs e)
+        {
+            isDilated = true;
+            isEroded = false;
+            int valueOfDilation = Convert.ToInt32(labelDilationValue.Text.ToString());
+            if (valueOfDilation > 0)
+                valueOfDilation--;
+            labelDilationValue.Text = valueOfDilation.ToString();
         }
     }
 }
