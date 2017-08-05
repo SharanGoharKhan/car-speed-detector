@@ -69,7 +69,7 @@ namespace car_speed_calculator
                 Image<Gray, byte> thresholded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 CvInvoke.Threshold(BgDifference, thresholded, 20, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
                 pictureBox2.Image = thresholded.Bitmap;
-                pictureBox2Label.Text = "Threshholded image";
+                pictureBox2Label.Text = "Threshholded image1";
                 //Perform erosion to remove camera noise
                 var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(2, 2), new Point(-1, -1));
                 Image<Gray, byte> eroded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
