@@ -8,17 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using Emgu.CV.Structure;
+using Emgu;
 using Emgu.CV;
 using Emgu.Util;
+using Emgu.CV.Util;
+using Emgu.CV.Structure;
+
 namespace car_speed_calculator
 {
     public static class MyUtilities
     {
-        public static Emgu.CV.Util.VectorOfVectorOfPoint FindContours(this Image<Gray, byte> image, Emgu.CV.CvEnum.ChainApproxMethod method = Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple
+        public static VectorOfVectorOfPoint FindContours(this Image<Gray, byte> image, Emgu.CV.CvEnum.ChainApproxMethod method = Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple
             , Emgu.CV.CvEnum.RetrType type = Emgu.CV.CvEnum.RetrType.List)
         {
-            Emgu.CV.Util.VectorOfVectorOfPoint result = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            VectorOfVectorOfPoint result = new Emgu.CV.Util.VectorOfVectorOfPoint();
             //if(method == Emgu.CV.CvEnum.ChainApproxMethod.ChainCode)
             //{
             //    throw new ColsaNotImplementedException
@@ -34,7 +37,7 @@ namespace car_speed_calculator
         int FPS = 30;
         int threshhold_value = 50;
         System.Collections.Generic.List<Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>> image_array = new List<Image<Bgr, Byte>>();
-        Emgu.CV.Capture _capture;
+        VideoCapture _capture;
         string file = "";
         //get a first image and convert it into gray scale
         Image<Bgr, byte> firstFrame;
@@ -45,53 +48,50 @@ namespace car_speed_calculator
         }
         private void My_Timer_Tick(object sender, EventArgs e)
         {
-                using (Emgu.CV.Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
+                using (Emgu.CV.Image<Bgr, byte> orignalFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             {
-                //convert both images into gray
+                //convert image into gray
+                Image<Bgr, byte> image = orignalFrame.Resize(pictureBox1.Width, pictureBox1.Height, 0);
+                Image<Gray, byte> frame = image.Convert<Gray, byte>();
+                //perform differencing on them to find the 'new introduction to the background and motions"
+                Image<Gray, byte> BgDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
+                Image<Gray, byte> FrameDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
+                //since i don't have a background image let next frame be considered as background
+                Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, byte>().Resize(pictureBox1.Width,pictureBox1.Height,0);
                 Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
-                Image<Bgr, byte> nextNextFrame = _capture.QueryFrame().ToImage<Bgr, byte>();
-                Image<Gray, byte> nextNextFrameGray = nextNextFrame.Convert<Gray, byte>();
-                //find absolute diff of gray images
-                Image<Gray, byte> diffFrame = nextFrameGray.AbsDiff(nextNextFrameGray);
-                //convert diffFrame to binary
-                Image<Gray, byte> diffFrameBinary = diffFrame.ThresholdBinary(new Gray(30), new Gray(255));
-                //create an empty image
-                Image<Gray, byte> resultImage = diffFrameBinary;
-                pictureBox2.Image = diffFrameBinary.ToBitmap();
-                //Create a countour
-                Image<Gray, byte> contours = resultImage;
-                //create a structuring element
-                var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
-                //apply dilation on image
-                Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
-                //pictureBox1.Image = resultImage.ToBitmap();
-                Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
-                //pictureBox2.Image = resultImage.ToBitmap();
-                    
-                //apply dilation on image
-                //Emgu.CV.CvInvoke.Dilate(diffFrameBinary, resultImage, element, new Point(-1, -1), 4, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
-                ////Create a contour again
-                //Image<Gray, byte> contours2 = resultImage;
-                //Emgu.CV.Util.VectorOfVectorOfPoint resultsOfContour2 = car_speed_calculator.MyUtilities.FindContours(resultImage, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, Emgu.CV.CvEnum.RetrType.External);
-                //create a list of point for rectangle
-                List<Point> points = new List<Point>();
-                //store the points inside a list
-                for(var i =0; i<resultsOfContour.Size;++i)
-                {
-                    for(var j=0;j<resultsOfContour[i].Size;++j)
-                    {
-                        points.Add(resultsOfContour[i][j]);
-                    }
-                }
-                //Draw a bounding box
-                for(var i=0;i<points.Count-1000;++i)
-                {
-                    nextFrame.Draw(new Rectangle(points[i].X, points[i].Y, 25, 25), new Bgr(0,0,255),1);
-                }
-                //convert the image to bitmap and set to picturebox
-                pictureBox1.Image = nextFrame.ToBitmap();
-                //pictureBox2.Image = resultImage.ToBitmap();
+                CvInvoke.AbsDiff(frame, nextFrameGray, BgDifference);
+                //Perform thresholding to remove noise and boost "new introductions"
+                Image<Gray, byte> thresholded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
+                CvInvoke.Threshold(BgDifference, thresholded, 20, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
+                //Perform erosion to remove camera noise
+                var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(2, 2), new Point(-1, -1));
+                Image<Gray, byte> eroded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
+                CvInvoke.Erode(thresholded, eroded, element, new Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
+                drawBoxes(eroded, image);
             }
+        }
+        private void drawBoxes(Emgu.CV.Image<Gray,byte> img, Emgu.CV.Image<Bgr,byte> original)
+        {
+            Gray cannyThreshold = new Gray(180);
+            Gray cannyTheshholdLinking = new Gray(120);
+            Gray circleAccumulatorThreshhold = new Gray(120);
+
+            Image<Gray, byte> cannyEdges = img.Canny(180,120);
+            LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
+                2,//Distance resolution in pixel-related units
+                Math.PI / 45.0,//Angle resolution measured in radians
+                20,//threshold
+                30,//min line width
+                10//gap between lines
+                )[0];//Get the lines from the first channel
+            #region Find rectangles
+            List<MCvBlob> boxList = new List<MCvBlob>();
+            using ( Emgu.Util.TypeEnum. = new MemStorage()) //allocate storage for contour approximation
+                {
+                var index = 0;
+                    for (Emgu.CV.CvInvoke.con contours = cannyEdges.FindContours(); contours!=null;contours = contours[index])
+                }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -109,7 +109,7 @@ namespace car_speed_calculator
                 My_Time.Interval = 1000 / FPS;
                 My_Time.Tick += new EventHandler(My_Timer_Tick);
                 My_Time.Start();
-                _capture = new Capture(file);
+                _capture = new VideoCapture(file);
             }
 
         }
@@ -134,7 +134,7 @@ namespace car_speed_calculator
                 {
                     Console.WriteLine(err.ToString());
                 }
-                Capture previewCapture = new Capture(file);
+                VideoCapture previewCapture = new VideoCapture(file);
                 this.firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -152,7 +152,7 @@ namespace car_speed_calculator
             else
             {
                 My_Time.Stop();
-                Capture previewCapture = new Capture(file);
+                VideoCapture previewCapture = new VideoCapture(file);
                 firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
                 firstFrameGray = firstFrame.Convert<Gray, byte>();
                 pictureBox1.Image = firstFrame.ToBitmap();
