@@ -16,20 +16,20 @@ using Emgu.CV.Structure;
 
 namespace car_speed_calculator
 {
-    public static class MyUtilities
-    {
-        public static VectorOfVectorOfPoint FindContours(this Image<Gray, byte> image, Emgu.CV.CvEnum.ChainApproxMethod method = Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple
-            , Emgu.CV.CvEnum.RetrType type = Emgu.CV.CvEnum.RetrType.List)
-        {
-            VectorOfVectorOfPoint result = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            //if(method == Emgu.CV.CvEnum.ChainApproxMethod.ChainCode)
-            //{
-            //    throw new ColsaNotImplementedException
-            //}
-            CvInvoke.FindContours(image, result, null, type, method);
-            return result;
-        }
-    }
+    //public static class MyUtilities
+    //{
+    //    public static VectorOfVectorOfPoint FindContours(this Image<Gray, byte> image, Emgu.CV.CvEnum.ChainApproxMethod method = Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple
+    //        , Emgu.CV.CvEnum.RetrType type = Emgu.CV.CvEnum.RetrType.List)
+    //    {
+    //        VectorOfVectorOfPoint result = new Emgu.CV.Util.VectorOfVectorOfPoint();
+    //        //if(method == Emgu.CV.CvEnum.ChainApproxMethod.ChainCode)
+    //        //{
+    //        //    throw new ColsaNotImplementedException
+    //        //}
+    //        CvInvoke.FindContours(image, result, null, type, method);
+    //        return result;
+    //    }
+    //}
 
     public  partial class Form1 : Form
     {
@@ -45,11 +45,16 @@ namespace car_speed_calculator
         public Form1()
         {
             InitializeComponent();
+            pictureBox1.ImageLocation = "placeholder-image.jpg";
+            pictureBox2.ImageLocation = "placeholder-image.jpg";
+            pictureBox3.ImageLocation = "placeholder-image.jpg";
+            pictureBox4.ImageLocation = "placeholder-image.jpg";
         }
         private void My_Timer_Tick(object sender, EventArgs e)
         {
                 using (Emgu.CV.Image<Bgr, byte> orignalFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             {
+                pictureBox1.Image = orignalFrame.ToBitmap();
                 //convert image into gray
                 Image<Bgr, byte> image = orignalFrame.Resize(pictureBox1.Width, pictureBox1.Height, 0);
                 Image<Gray, byte> frame = image.Convert<Gray, byte>();
@@ -63,10 +68,14 @@ namespace car_speed_calculator
                 //Perform thresholding to remove noise and boost "new introductions"
                 Image<Gray, byte> thresholded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 CvInvoke.Threshold(BgDifference, thresholded, 20, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
+                pictureBox2.Image = thresholded.Bitmap;
+                pictureBox2Label.Text = "Threshholded image";
                 //Perform erosion to remove camera noise
                 var element = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(2, 2), new Point(-1, -1));
                 Image<Gray, byte> eroded = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 CvInvoke.Erode(thresholded, eroded, element, new Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                pictureBox3.Image = eroded.Bitmap;
+                pictureBox3Label.Text = "Eroded Image";
                 //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
                 drawBoxes(eroded, image);
             }
@@ -78,7 +87,6 @@ namespace car_speed_calculator
             Gray circleAccumulatorThreshhold = new Gray(120);
 
             Image<Gray, byte> cannyEdges = img.Canny(180,120);
-            pictureBox1.Image = cannyEdges.ToBitmap();
             LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
                 2,//Distance resolution in pixel-related units
                 Math.PI / 45.0,//Angle resolution measured in radians
@@ -93,7 +101,8 @@ namespace car_speed_calculator
             {
                 imageLines.Draw(line, new Bgr(Color.DeepSkyBlue), 1);
             }
-            pictureBox2.Image = imageLines.ToBitmap();
+            pictureBox4.Image = imageLines.ToBitmap();
+            pictureBox4Label.Text = "Result Image";
             //List<Triangle2DF> boxList = new List<Triangle2DF>();
             //using ( VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint()) //allocate storage for contour approximation
             //    {
@@ -146,6 +155,8 @@ namespace car_speed_calculator
                 this.firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox4.SizeMode = PictureBoxSizeMode.StretchImage;
                 this.firstFrameGray = this.firstFrame.Convert<Gray, byte>();
                 pictureBox1.Image = this.firstFrame.ToBitmap();
 
@@ -164,27 +175,6 @@ namespace car_speed_calculator
                 firstFrame = previewCapture.QueryFrame().ToImage<Bgr, Byte>();
                 firstFrameGray = firstFrame.Convert<Gray, byte>();
                 pictureBox1.Image = firstFrame.ToBitmap();
-            }
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            //Pause Button
-            if (file == "")
-                MessageBox.Show("Please select a video first", "Error");
-            else
-            {
-                if (button6.Text == "Pause")
-                {
-                    button6.Text = "Play";
-                    button6.BackColor = Color.Green;
-                }
-                else
-                {
-                    button6.Text = "Pause";
-                    button6.BackColor = Color.Red;
-                }
-                //My_Time.Stop();
             }
         }
 

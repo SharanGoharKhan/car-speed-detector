@@ -63,7 +63,6 @@ C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_spee
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.csprojResolveAssemblyReference.cache
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.Properties.Resources.resources
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.csproj.GenerateResource.Cache
-C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.MyUtilities.resources
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\concrt140.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\cvextern.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x64\msvcp140.dll
@@ -74,3 +73,4 @@ C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_spee
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\msvcp140.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\opencv_ffmpeg320.dll
 C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\bin\Debug\x86\vcruntime140.dll
+C:\Users\Admin\Documents\Visual Studio 2015\Projects\car-speed-detector\car_speed_calculator\obj\Debug\car_speed_calculator.Form1.resources
