@@ -90,27 +90,75 @@ namespace car_speed_calculator
             Gray circleAccumulatorThreshhold = new Gray(120);
 
             Image<Gray, byte> cannyEdges = img.Canny(180,120);
-            LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
-                2,//Distance resolution in pixel-related units
-                Math.PI / 45.0,//Angle resolution measured in radians
-                20,//threshold
-                30,//min line width
-                10//gap between lines
-                )[0];//Get the lines from the first channel
+            //LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
+            //    1,//Distance resolution in pixel-related units
+            //    Math.PI / 45.0,//Angle resolution measured in radians
+            //    20,//threshold
+            //    30,//min line width
+            //    10//gap between lines
+            //    )[0];//Get the lines from the first channel
             #region Find rectangles
-            Image<Bgr, Byte> imageLines = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
-            foreach(LineSegment2D line in lines)
-            {
-                imageLines.Draw(line, new Bgr(Color.DeepSkyBlue), 1);
-            }
-            pictureBox4.Image = imageLines.ToBitmap();
-            pictureBox4Label.Text = "Result Image";
+            //Image<Bgr, Byte> imageLines = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
+            //foreach(LineSegment2D line in lines)
+            //{
+            //    imageLines.Draw(line, new Bgr(Color.DeepSkyBlue), 1);
+            //}
+            //Image<Bgr, byte> circleLines = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
+            //CircleF[] circles = CvInvoke.HoughCircles(cannyEdges, Emgu.CV.CvEnum.HoughType.Gradient, 2.0, 20.0, 120, 120, 5);
+            //foreach(CircleF circle in circles)
+            //{
+            //    circleLines.Draw(circle, new Bgr(Color.DeepSkyBlue), 1);
+            //}
+            //pictureBox4.Image = circleLines.ToBitmap();
+            //pictureBox4Label.Text = "Result Image";
             //List<Triangle2DF> boxList = new List<Triangle2DF>();
             //using ( VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint()) //allocate storage for contour approximation
             //    {
             //        CvInvoke.FindContours()                
             //    }
+            List<RotatedRect> boxList = new List<RotatedRect>();
+            Image<Bgr, Byte> imageCircles = new Image<Bgr, byte>(cannyEdges.Width, cannyEdges.Height);
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                CvInvoke.FindContours(cannyEdges, contours, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                int count = contours.Size;
+                for(int i = 0; i<count;i++)
+                {
+                    using (VectorOfPoint contour = contours[i])
+                    using (VectorOfPoint approxContour = new VectorOfPoint())
+                    {
+                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+                        if(CvInvoke.ContourArea(approxContour,false)>250) //only consider contours with area greater than 250
+                        {
+                            if(approxContour.Size == 4) // The contour has 4 vertices
+                            {
+                                #region determine if all the angles in the contour are within [80,100] degree
+                                bool isRectangle = true;
+                                Point[] pts = approxContour.ToArray();
+                                LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+                                for(int j=0;j<edges.Length;j++)
+                                {
+                                    double angle = Math.Abs(edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                                    if (angle < 80 || angle > 100)
+                                    {
+                                        isRectangle = false;
+                                        break;
+                                    }
+                                }
+                                #endregion
+                                if (isRectangle)
+                                    boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                            }
+                        }
+                    }
+                }
+            }
             #endregion Find rectangles
+            foreach(RotatedRect box in boxList)
+            {
+                imageCircles.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
+            }
+            pictureBox4.Image = imageCircles.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
