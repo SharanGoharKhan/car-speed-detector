@@ -156,9 +156,9 @@ namespace car_speed_calculator
             #endregion Find rectangles
             foreach(RotatedRect box in boxList)
             {
-                imageCircles.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
+                original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
             }
-            pictureBox4.Image = imageCircles.ToBitmap();
+            pictureBox4.Image = original.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
