@@ -20,7 +20,7 @@ namespace car_speed_calculator
     public  partial class Form1 : Form
     {
         System.Windows.Forms.Timer My_Time = new Timer();
-        int FPS = 30;
+        int FPS = 20;
         VideoCapture _capture;
         string file = "";
         //get a first image and convert it into gray scale
@@ -93,6 +93,7 @@ namespace car_speed_calculator
             Gray circleAccumulatorThreshhold = new Gray(120);
 
             Image<Gray, byte> cannyEdges = img.Canny(180,120);
+            pictureBox3.Image = cannyEdges.ToBitmap();
             //LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
             //    1,//Distance resolution in pixel-related units
             //    Math.PI / 45.0,//Angle resolution measured in radians
@@ -142,7 +143,7 @@ namespace car_speed_calculator
                                 for(int j=0;j<edges.Length;j++)
                                 {
                                     double angle = Math.Abs(edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                    if (angle < 80 || angle > 100)
+                                    if (angle < 0 || angle > 360)
                                     {
                                         isRectangle = false;
                                         break;
@@ -160,8 +161,8 @@ namespace car_speed_calculator
             foreach(RotatedRect box in boxList)
             {
                 original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
+                pictureBox4.Image = original.ToBitmap();
             }
-            pictureBox4.Image = original.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
