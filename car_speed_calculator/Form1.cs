@@ -77,6 +77,9 @@ namespace car_speed_calculator
                     CvInvoke.Dilate(thresholded, eroded, element, new Point(-1, -1), dilationValue, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
                 if(isEroded)
                     CvInvoke.Erode(thresholded, eroded, element, new Point(-1, -1), erosionValue, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                System.Drawing.Size kSize = new Size(10, 10);
+                CvInvoke.Blur(thresholded, eroded, kSize,new Point(-1,-1),Emgu.CV.CvEnum.BorderType.Default);
+                CvInvoke.Threshold(eroded, eroded, 10, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
                 pictureBox3.Image = eroded.Bitmap;
                 pictureBox3Label.Text = "Eroded/Dilated Image";
                 //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
