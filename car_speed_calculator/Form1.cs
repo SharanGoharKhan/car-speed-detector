@@ -57,7 +57,7 @@ namespace car_speed_calculator
                 Image<Gray, byte> BgDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 Image<Gray, byte> FrameDifference = new Image<Gray, byte>(pictureBox1.Width, pictureBox1.Height);
                 //since i don't have a background image let next frame be considered as background
-                if(_capture.QueryFrame() == null)
+                if(_capture.QueryFrame().ToImage<Bgr,byte>() == null)
                 {
                     My_Time.Stop();
                     return;
