@@ -13,6 +13,7 @@ using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Util;
 using Emgu.CV.Structure;
+using Emgu.CV.Tracking;
 
 namespace car_speed_calculator
 {
@@ -21,6 +22,7 @@ namespace car_speed_calculator
     {
         System.Windows.Forms.Timer My_Time = new Timer();
         List<RotatedRect> previousBoxes = new List<RotatedRect>();
+        MultiTracker multiTracker;
         int FPS = 32;
         VideoCapture _capture;
         string file = "";
@@ -86,7 +88,7 @@ namespace car_speed_calculator
                 //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
                 //CvInvoke.Erode(eroded, eroded, element, new Point(-1, -1), 20, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
                 CvInvoke.Imshow("ErodedImage", eroded);
-                CvInvoke.MedianBlur(eroded, eroded, 15);
+                CvInvoke.MedianBlur(eroded, eroded, 7);
                 drawBoxes(eroded, image);
             }
         }
@@ -167,24 +169,21 @@ namespace car_speed_calculator
             }
             #endregion Find rectangles
             int currentboxListCount = boxList.Count;
-            foreach(RotatedRect box in boxList)
+            int speedBoxX = 50;
+            int speedBoxY = 400;
+            int speedBoxW = 950;
+            int speedBoxH = 200;
+            foreach (RotatedRect box in boxList)
             {
-                //if(this.previousBoxes.Count != 0)
-                //{
-                    //if(this.previousBoxes.Count < currentboxListCount)
-                    //{
-                        //reduceBoxes(boxList);
-                    //}
-                    //Console.WriteLine("Yes");
+                if (speedBoxX < box.Center.X && speedBoxY < box.Center.Y && speedBoxX + speedBoxW > box.Center.X && speedBoxY + speedBoxH > box.Center.Y)
+                    original.Draw(box, new Bgr(Color.Green), 2);
+                else
                     original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
-                    //CvInvoke.PutText(original, "(" + Math.Ceiling(box.Center.X).ToString() + "," + Math.Ceiling(box.Center.Y).ToString() + ")", new Point((int)Math.Ceiling(box.Center.X), (int)Math.Ceiling(box.Center.Y)), Emgu.CV.CvEnum.FontFace.HersheyComplex, .5, new Bgr(0, 255, 0).MCvScalar);
-                    
-                //}
-                //else
-                //{
-                //    this.previousBoxes = boxList;
-                //}
+                //CvInvoke.PutText(original, "(" + Math.Ceiling(box.Center.X).ToString() + "," + Math.Ceiling(box.Center.Y).ToString() + ")", new Point((int)Math.Ceiling(box.Center.X), (int)Math.Ceiling(box.Center.Y)), Emgu.CV.CvEnum.FontFace.HersheyComplex, .5, new Bgr(0, 255, 0).MCvScalar);
             }
+            System.Drawing.Rectangle speedBox = new Rectangle(speedBoxX, speedBoxY, speedBoxW, speedBoxH);
+            //RotatedRect speedBox = new RotatedRect(new PointF(speedBoxX, speedBoxY), new SizeF(speedBoxW, speedBoxH), 0);
+            original.Draw(speedBox, new Bgr(Color.Red), 4);
             pictureBox4.Image = original.ToBitmap();
         }
 
