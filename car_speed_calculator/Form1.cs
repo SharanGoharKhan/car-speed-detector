@@ -22,7 +22,6 @@ namespace car_speed_calculator
     {
         System.Windows.Forms.Timer My_Time = new Timer();
         List<RotatedRect> previousBoxes = new List<RotatedRect>();
-        MultiTracker multiTracker;
         int FPS = 32;
         VideoCapture _capture;
         string file = "";
@@ -175,10 +174,11 @@ namespace car_speed_calculator
             int speedBoxH = 200;
             foreach (RotatedRect box in boxList)
             {
+                Rectangle temp = new Rectangle(Int32.Parse(Math.Ceiling(box.Center.X).ToString()), Int32.Parse(Math.Ceiling(box.Center.Y).ToString()), 40, 40);
                 if (speedBoxX < box.Center.X && speedBoxY < box.Center.Y && speedBoxX + speedBoxW > box.Center.X && speedBoxY + speedBoxH > box.Center.Y)
-                    original.Draw(box, new Bgr(Color.Green), 2);
+                    original.Draw(temp, new Bgr(Color.Green), 2);
                 else
-                    original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
+                    original.Draw(temp, new Bgr(Color.DeepSkyBlue), 1);
                 //CvInvoke.PutText(original, "(" + Math.Ceiling(box.Center.X).ToString() + "," + Math.Ceiling(box.Center.Y).ToString() + ")", new Point((int)Math.Ceiling(box.Center.X), (int)Math.Ceiling(box.Center.Y)), Emgu.CV.CvEnum.FontFace.HersheyComplex, .5, new Bgr(0, 255, 0).MCvScalar);
             }
             System.Drawing.Rectangle speedBox = new Rectangle(speedBoxX, speedBoxY, speedBoxW, speedBoxH);
