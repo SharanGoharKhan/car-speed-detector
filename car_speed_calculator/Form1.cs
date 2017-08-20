@@ -20,7 +20,8 @@ namespace car_speed_calculator
     public  partial class Form1 : Form
     {
         System.Windows.Forms.Timer My_Time = new Timer();
-        int FPS = 20;
+        List<RotatedRect> previousBoxes = new List<RotatedRect>();
+        int FPS = 32;
         VideoCapture _capture;
         string file = "";
         //get a first image and convert it into gray scale
@@ -57,12 +58,12 @@ namespace car_speed_calculator
                 Image<Gray, byte> BgDifference = new Image<Gray, byte>(pictureBox4.Width, pictureBox4.Height);
                 Image<Gray, byte> FrameDifference = new Image<Gray, byte>(pictureBox4.Width, pictureBox4.Height);
                 //since i don't have a background image let next frame be considered as background
-                if(_capture.QueryFrame().ToImage<Bgr,byte>() == null)
-                {
-                    My_Time.Stop();
-                    return;
-                }
-                Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, byte>().Resize(pictureBox4.Width,pictureBox4.Height,0);
+                //if(_capture.QueryFrame().ToImage<Bgr,byte>() == null)
+                //{
+                //    My_Time.Stop();
+                //    return;
+                //}
+                Image<Bgr, byte> nextFrame = _capture.QueryFrame().ToImage<Bgr, byte>().Resize(pictureBox4.Width, pictureBox4.Height, 0);
                 Image<Gray, byte> nextFrameGray = nextFrame.Convert<Gray, byte>();
                 CvInvoke.AbsDiff(frame, nextFrameGray, BgDifference);
                 //Perform thresholding to remove noise and boost "new introductions"
@@ -83,6 +84,9 @@ namespace car_speed_calculator
                 //pictureBox3.Image = eroded.Bitmap;
                 //pictureBox3Label.Text = "Eroded/Dilated Image";
                 //Takes the threshholded image and looks for square and draws the squares out on top of the current frame
+                //CvInvoke.Erode(eroded, eroded, element, new Point(-1, -1), 20, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                CvInvoke.Imshow("ErodedImage", eroded);
+                CvInvoke.MedianBlur(eroded, eroded, 15);
                 drawBoxes(eroded, image);
             }
         }
@@ -93,6 +97,7 @@ namespace car_speed_calculator
             Gray circleAccumulatorThreshhold = new Gray(120);
 
             Image<Gray, byte> cannyEdges = img.Canny(180,120);
+            CvInvoke.Imshow("cannyEdges", cannyEdges);
             //pictureBox3.Image = cannyEdges.ToBitmap();
             //LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
             //    1,//Distance resolution in pixel-related units
@@ -131,38 +136,56 @@ namespace car_speed_calculator
                     using (VectorOfPoint contour = contours[i])
                     using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
+                        //CvInvoke.ApproxPolyDP(contour,approxContour,CvInvoke.arc,true)
                         CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        if(CvInvoke.ContourArea(approxContour,false)>250) //only consider contours with area greater than 250
-                        {
-                            if(approxContour.Size == 4) // The contour has 4 vertices
-                            {
-                                #region determine if all the angles in the contour are within [80,100] degree
-                                bool isRectangle = true;
-                                Point[] pts = approxContour.ToArray();
-                                LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
-                                for(int j=0;j<edges.Length;j++)
-                                {
-                                    double angle = Math.Abs(edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                    if (angle < 0 || angle > 360)
-                                    {
-                                        isRectangle = false;
-                                        break;
-                                    }
-                                }
-                                #endregion
-                                if (isRectangle)
-                                    boxList.Add(CvInvoke.MinAreaRect(approxContour));
-                            }
-                        }
+                        if(CvInvoke.ContourArea(approxContour,false)>500)
+                            boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                        //if(CvInvoke.ContourArea(approxContour,false)>500) //only consider contours with area greater than 250
+                        //{
+                        //    if(approxContour.Size == 4) // The contour has 4 vertices
+                        //    {
+                        //        #region determine if all the angles in the contour are within [80,100] degree
+                        //        bool isRectangle = true;
+                        //        Point[] pts = approxContour.ToArray();
+                        //        LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+                        //        for(int j=0;j<edges.Length;j++)
+                        //        {
+                        //            double angle = Math.Abs(edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                        //            if (angle < 0 || angle > 360)
+                        //            {
+                        //                isRectangle = false;
+                        //                break;
+                        //            }
+                        //        }
+                        //        #endregion
+                        //        if (isRectangle)
+                        //            boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                        //    }
+                        //}
                     }
                 }
             }
             #endregion Find rectangles
+            int currentboxListCount = boxList.Count;
             foreach(RotatedRect box in boxList)
             {
-                original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
-                pictureBox4.Image = original.ToBitmap();
+                //if(this.previousBoxes.Count != 0)
+                //{
+                    //if(this.previousBoxes.Count < currentboxListCount)
+                    //{
+                        //reduceBoxes(boxList);
+                    //}
+                    //Console.WriteLine("Yes");
+                    original.Draw(box, new Bgr(Color.DeepSkyBlue), 1);
+                    //CvInvoke.PutText(original, "(" + Math.Ceiling(box.Center.X).ToString() + "," + Math.Ceiling(box.Center.Y).ToString() + ")", new Point((int)Math.Ceiling(box.Center.X), (int)Math.Ceiling(box.Center.Y)), Emgu.CV.CvEnum.FontFace.HersheyComplex, .5, new Bgr(0, 255, 0).MCvScalar);
+                    
+                //}
+                //else
+                //{
+                //    this.previousBoxes = boxList;
+                //}
             }
+            pictureBox4.Image = original.ToBitmap();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -184,7 +207,17 @@ namespace car_speed_calculator
             }
 
         }
-
+        //private void reduceBoxes(List<RotatedRect> currentBoxes)
+        //{
+        //    List<RotatedRect> resultBoxes = new List<RotatedRect>();
+        //    foreach(RotatedRect currBox in currentBoxes)
+        //    {
+        //        foreach(RotatedRect prevBox in this.previousBoxes)
+        //        {
+        //            if(currBox.Center.X == prevBox )
+        //        }
+        //    }
+        //}
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
 
