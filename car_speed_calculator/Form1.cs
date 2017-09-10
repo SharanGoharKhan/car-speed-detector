@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,9 +20,10 @@ namespace car_speed_calculator
    
     public  partial class Form1 : Form
     {
+        //modified
         System.Windows.Forms.Timer My_Time = new Timer();
         List<RotatedRect> previousBoxes = new List<RotatedRect>();
-        int FPS = 32;
+        int FPS = 20;
         VideoCapture _capture;
         string file = "";
         //get a first image and convert it into gray scale
@@ -30,6 +31,14 @@ namespace car_speed_calculator
         bool isDilated = false;
         Image<Bgr, byte> firstFrame;
         Image<Gray, byte> firstFrameGray;
+        double previousCentroidX = 0;
+        double previousCentroidY = 0;
+        double currentCentroidX = 0;
+        double currentCentroidY = 0;
+        int speedBoxX = 100;
+        int speedBoxY = 400;
+        int speedBoxW = 100;
+        int speedBoxH = 100;
         public Form1()
         {
             InitializeComponent();
@@ -88,8 +97,32 @@ namespace car_speed_calculator
                 //CvInvoke.Erode(eroded, eroded, element, new Point(-1, -1), 20, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
                 CvInvoke.Imshow("ErodedImage", eroded);
                 CvInvoke.MedianBlur(eroded, eroded, 7);
+                //CvInvoke.Dilate(eror)
                 drawBoxes(eroded, image);
             }
+        }
+        private void calculateSpeed(RotatedRect rect)
+        {
+            //if the rect enters the frame for the first time
+            if(previousCentroidX == 0 || previousCentroidY ==0)
+            {
+                previousCentroidX = rect.Center.X;
+                previousCentroidY = rect.Center.Y;
+            }
+            else
+            {
+                currentCentroidX = rect.Center.X;
+                currentCentroidY = rect.Center.Y;
+                //calculate the distance 
+                double distance = Math.Sqrt(Math.Pow(currentCentroidX - previousCentroidX, 2) + Math.Pow(currentCentroidY - previousCentroidY, 2));
+                distance = Math.Floor(distance);
+                //if (distance > 30)
+                //    distance = 30;
+                labelSpeedValue.Text = distance.ToString();
+                previousCentroidX = currentCentroidX;
+                previousCentroidY = currentCentroidY;
+            }
+            
         }
         private void drawBoxes(Emgu.CV.Image<Gray,byte> img, Emgu.CV.Image<Bgr,byte> original)
         {
@@ -168,15 +201,20 @@ namespace car_speed_calculator
             }
             #endregion Find rectangles
             int currentboxListCount = boxList.Count;
-            int speedBoxX = 50;
-            int speedBoxY = 400;
-            int speedBoxW = 950;
-            int speedBoxH = 200;
+       
+            Boolean firstBoxCalled = false;
             foreach (RotatedRect box in boxList)
             {
                 Rectangle temp = new Rectangle(Int32.Parse(Math.Ceiling(box.Center.X).ToString()), Int32.Parse(Math.Ceiling(box.Center.Y).ToString()), 40, 40);
                 if (speedBoxX < box.Center.X && speedBoxY < box.Center.Y && speedBoxX + speedBoxW > box.Center.X && speedBoxY + speedBoxH > box.Center.Y)
+                {
+                    if(!firstBoxCalled)
+                    {
+                        calculateSpeed(box);
+                        firstBoxCalled = true;
+                    }
                     original.Draw(temp, new Bgr(Color.Green), 2);
+                }
                 else
                     original.Draw(temp, new Bgr(Color.DeepSkyBlue), 1);
                 //CvInvoke.PutText(original, "(" + Math.Ceiling(box.Center.X).ToString() + "," + Math.Ceiling(box.Center.Y).ToString() + ")", new Point((int)Math.Ceiling(box.Center.X), (int)Math.Ceiling(box.Center.Y)), Emgu.CV.CvEnum.FontFace.HersheyComplex, .5, new Bgr(0, 255, 0).MCvScalar);
@@ -285,6 +323,31 @@ namespace car_speed_calculator
             if (valueOfDilation > 0)
                 valueOfDilation--;
             labelDilationValue.Text = valueOfDilation.ToString();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonUp_Click(object sender, EventArgs e)
+        {
+            speedBoxY -= 10;
+        }
+
+        private void buttonDown_Click(object sender, EventArgs e)
+        {
+            speedBoxY += 10;
+        }
+
+        private void buttonLeft_Click(object sender, EventArgs e)
+        {
+            speedBoxX -= 10;
+        }
+
+        private void buttonRight_Click(object sender, EventArgs e)
+        {
+            speedBoxX += 10;
         }
     }
 }
