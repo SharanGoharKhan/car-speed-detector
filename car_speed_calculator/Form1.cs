@@ -14,6 +14,7 @@ using Emgu.Util;
 using Emgu.CV.Util;
 using Emgu.CV.Structure;
 using Emgu.CV.Tracking;
+using System.Threading;
 
 namespace car_speed_calculator
 {
@@ -21,7 +22,8 @@ namespace car_speed_calculator
     public  partial class Form1 : Form
     {
         //modified
-        System.Windows.Forms.Timer My_Time = new Timer();
+        int progessBarvalue = 0;
+        System.Windows.Forms.Timer My_Time = new System.Windows.Forms.Timer();
         List<RotatedRect> previousBoxes = new List<RotatedRect>();
         int FPS = 20;
         VideoCapture _capture;
@@ -39,9 +41,29 @@ namespace car_speed_calculator
         int speedBoxY = 400;
         int speedBoxW = 100;
         int speedBoxH = 100;
+        private void showLoadingScreen()
+        {
+            progressBar1.Step = 1;
+            progressBar1.Value = 1;
+            progressBar1.Maximum = 1000000;
+            for (int i = 0; i < 1000000; ++i)
+            {
+                for(int j=0;j<10000;++j)
+                {
+
+                }
+                //aTimer.Elapsed += updateProgressBar;
+                //aTimer.AutoReset = true;
+                //aTimer.Enabled = true;
+                //System.Threading.Thread.Sleep(5);
+                progressBar1.PerformStep();
+            }
+    }
         public Form1()
         {
             InitializeComponent();
+            timer1.Start();
+            //showLoadingScreen();
             //pictureBox1.ImageLocation = "placeholder-image.jpg";
             //pictureBox2.ImageLocation = "placeholder-image.jpg";
             //pictureBox3.ImageLocation = "placeholder-image.jpg";
@@ -348,6 +370,18 @@ namespace car_speed_calculator
         private void buttonRight_Click(object sender, EventArgs e)
         {
             speedBoxX += 10;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            progressBar1.ForeColor = Color.Red;
+            progressBar1.Increment(1);
+            this.progessBarvalue += 1;
+            if(progressBar1.Maximum == this.progessBarvalue)
+            {
+                panel1.Hide();
+                timer1.Stop();
+            }
         }
     }
 }
