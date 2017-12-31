@@ -388,5 +388,25 @@ namespace car_speed_calculator
         {
 
         }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonDistancePlus_Click(object sender, EventArgs e)
+        {
+            int valueOfDistance = Convert.ToInt32(labelDistance.Text.ToString());
+            valueOfDistance += 1;
+            labelDistance.Text = valueOfDistance.ToString();
+        }
+
+        private void buttonDistanceMinus_Click(object sender, EventArgs e)
+        {
+            int valueOfDistance = Convert.ToInt32(labelDistance.Text.ToString());
+            if (valueOfDistance > 0)
+                valueOfDistance -= 1;
+            labelDistance.Text = valueOfDistance.ToString();
+        }
     }
 }
