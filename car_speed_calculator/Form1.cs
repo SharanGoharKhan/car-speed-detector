@@ -41,6 +41,8 @@ namespace car_speed_calculator
         int speedBoxY = 400;
         int speedBoxW = 100;
         int speedBoxH = 100;
+        int distanceValue = 10;
+       
         private void showLoadingScreen()
         {
             progressBar1.Step = 1;
@@ -137,9 +139,10 @@ namespace car_speed_calculator
                 currentCentroidY = rect.Center.Y;
                 //calculate the distance 
                 double distance = Math.Sqrt(Math.Pow(currentCentroidX - previousCentroidX, 2) + Math.Pow(currentCentroidY - previousCentroidY, 2));
-                distance = Math.Floor(distance);
+                distance = Math.Floor(distance)*Math.Log(distanceValue);
                 //if (distance > 30)
                 //    distance = 30;
+                distance = Math.Floor(distance);
                 labelSpeedValue.Text = distance.ToString();
                 previousCentroidX = currentCentroidX;
                 previousCentroidY = currentCentroidY;
@@ -374,11 +377,21 @@ namespace car_speed_calculator
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            label1.Hide();
+            label2.Hide();
+            labelDistance.Hide();
+            buttonDistanceMinus.Hide();
+            buttonDistancePlus.Hide();
             progressBar1.ForeColor = Color.Red;
             progressBar1.Increment(1);
             this.progessBarvalue += 1;
             if(progressBar1.Maximum == this.progessBarvalue)
             {
+                label1.Show();
+                label2.Show();
+                labelDistance.Show();
+                buttonDistanceMinus.Show();
+                buttonDistancePlus.Show();
                 panel1.Hide();
                 timer1.Stop();
             }
@@ -398,6 +411,7 @@ namespace car_speed_calculator
         {
             int valueOfDistance = Convert.ToInt32(labelDistance.Text.ToString());
             valueOfDistance += 1;
+            distanceValue = valueOfDistance;
             labelDistance.Text = valueOfDistance.ToString();
         }
 
@@ -406,6 +420,7 @@ namespace car_speed_calculator
             int valueOfDistance = Convert.ToInt32(labelDistance.Text.ToString());
             if (valueOfDistance > 0)
                 valueOfDistance -= 1;
+            distanceValue = valueOfDistance;
             labelDistance.Text = valueOfDistance.ToString();
         }
     }
